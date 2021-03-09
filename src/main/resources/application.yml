@@ -1,3 +1,20 @@
+
+# 项目相关配置
+black:
+    # 名称
+    name: black
+    # 版本
+    version: 1.0.0
+    # 版权年份
+    copyrightYear: 2021
+    # 实例演示开关
+    demoEnabled: true
+    # 文件路径,使用jvm系统变量,兼容windows和linux;
+    profile: ${user.dir}/uploadPath
+    # 获取ip地址开关
+    addressEnabled: false
+    # 验证码类型 math 数组计算 char 字符验证
+    captchaType: math
 # Tomcat
 server:
     tomcat:
@@ -5,9 +22,13 @@ server:
         max-threads: 1000
         min-spare-threads: 30
     port: 8088
-    connection-timeout: 5000ms
     servlet:
         context-path: /wx
+# 日志配置
+logging:
+    level:
+        cn.hmxz: debug
+        org.springframework: warn
 
 debug: false
 

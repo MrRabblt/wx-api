@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hmxz.modules.lit.dao.StandMakeDao">
+
+    <resultMap type="cn.hmxz.modules.lit.entity.StandMake" id="StandMakeMap">
+        <result property="standId" column="stand_id" jdbcType="INTEGER"/>
+        <result property="relatedId" column="related_id" jdbcType="INTEGER"/>
+        <result property="relatedType" column="related_type" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="standType" column="stand_type" jdbcType="VARCHAR"/>
+        <result property="isStand" column="is_stand" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="StandMakeMap">
+        select
+          stand_id, related_id, related_type, user_id, stand_type, is_stand, create_time
+        from black_horse.stand_make
+        where stand_id = #{standId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StandMakeMap">
+        select
+          stand_id, related_id, related_type, user_id, stand_type, is_stand, create_time
+        from black_horse.stand_make
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="StandMakeMap">
+        select
+        stand_id, related_id, related_type, user_id, stand_type, is_stand, create_time
+        from black_horse.stand_make
+        <where>
+            <if test="standId != null">
+                and stand_id = #{standId}
+            </if>
+            <if test="relatedId != null">
+                and related_id = #{relatedId}
+            </if>
+            <if test="relatedType != null and relatedType != ''">
+                and related_type = #{relatedType}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="standType != null and standType != ''">
+                and stand_type = #{standType}
+            </if>
+            <if test="isStand != null">
+                and is_stand = #{isStand}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="standId" useGeneratedKeys="true">
+        insert into black_horse.stand_make(related_id, related_type, user_id, stand_type, is_stand, create_time)
+        values (#{relatedId}, #{relatedType}, #{userId}, #{standType}, #{isStand}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="standId" useGeneratedKeys="true">
+        insert into black_horse.stand_make(related_id, related_type, user_id, stand_type, is_stand, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.relatedId}, #{entity.relatedType}, #{entity.userId}, #{entity.standType}, #{entity.isStand},
+            #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="standId" useGeneratedKeys="true">
+        insert into black_horse.stand_make(related_id, related_type, user_id, stand_type, is_stand, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.relatedId}, #{entity.relatedType}, #{entity.userId}, #{entity.standType}, #{entity.isStand},
+            #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        related_id = values(related_id) , related_type = values(related_type) , user_id = values(user_id) , stand_type =
+        values(stand_type) , is_stand = values(is_stand) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update black_horse.stand_make
+        <set>
+            <if test="relatedId != null">
+                related_id = #{relatedId},
+            </if>
+            <if test="relatedType != null and relatedType != ''">
+                related_type = #{relatedType},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="standType != null and standType != ''">
+                stand_type = #{standType},
+            </if>
+            <if test="isStand != null">
+                is_stand = #{isStand},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where stand_id = #{standId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from black_horse.stand_make where stand_id = #{standId}
+    </delete>
+
+</mapper>

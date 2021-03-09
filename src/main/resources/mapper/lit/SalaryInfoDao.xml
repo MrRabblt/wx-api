@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hmxz.modules.lit.dao.SalaryInfoDao">
+
+    <resultMap type="cn.hmxz.modules.lit.entity.SalaryInfo" id="SalaryInfoMap">
+        <result property="salaryId" column="salary_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="company" column="company" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
+        <result property="salary" column="salary" jdbcType="VARCHAR"/>
+        <result property="education" column="education" jdbcType="VARCHAR"/>
+        <result property="industry" column="industry" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="trusted" column="trusted" jdbcType="INTEGER"/>
+        <result property="notTrusted" column="not_trusted" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="views" column="views" jdbcType="INTEGER"/>
+        <result property="likes" column="likes" jdbcType="INTEGER"/>
+        <result property="favorites" column="favorites" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SalaryInfoMap">
+        select
+          salary_id, user_id, company, city, salary, education, industry, remark, trusted, not_trusted, status, views, likes, favorites, create_time
+        from black_horse.salary_info
+        where salary_id = #{salaryId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SalaryInfoMap">
+        select
+          salary_id, user_id, company, city, salary, education, industry, remark, trusted, not_trusted, status, views, likes, favorites, create_time
+        from black_horse.salary_info
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SalaryInfoMap">
+        select
+        salary_id, user_id, company, city, salary, education, industry, remark, trusted, not_trusted, status, views,
+        likes, favorites, create_time
+        from black_horse.salary_info
+        <where>
+            <if test="salaryId != null">
+                and salary_id = #{salaryId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="company != null and company != ''">
+                and company = #{company}
+            </if>
+            <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="salary != null and salary != ''">
+                and salary = #{salary}
+            </if>
+            <if test="education != null and education != ''">
+                and education = #{education}
+            </if>
+            <if test="industry != null and industry != ''">
+                and industry = #{industry}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="trusted != null">
+                and trusted = #{trusted}
+            </if>
+            <if test="notTrusted != null">
+                and not_trusted = #{notTrusted}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="views != null">
+                and views = #{views}
+            </if>
+            <if test="likes != null">
+                and likes = #{likes}
+            </if>
+            <if test="favorites != null">
+                and favorites = #{favorites}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="salaryId" useGeneratedKeys="true">
+        insert into black_horse.salary_info(user_id, company, city, salary, education, industry, remark, trusted, not_trusted, status, views, likes, favorites, create_time)
+        values (#{userId}, #{company}, #{city}, #{salary}, #{education}, #{industry}, #{remark}, #{trusted}, #{notTrusted}, #{status}, #{views}, #{likes}, #{favorites}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="salaryId" useGeneratedKeys="true">
+        insert into black_horse.salary_info(user_id, company, city, salary, education, industry, remark, trusted,
+        not_trusted, status, views, likes, favorites, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.company}, #{entity.city}, #{entity.salary}, #{entity.education},
+            #{entity.industry}, #{entity.remark}, #{entity.trusted}, #{entity.notTrusted}, #{entity.status},
+            #{entity.views}, #{entity.likes}, #{entity.favorites}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="salaryId" useGeneratedKeys="true">
+        insert into black_horse.salary_info(user_id, company, city, salary, education, industry, remark, trusted,
+        not_trusted, status, views, likes, favorites, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.company}, #{entity.city}, #{entity.salary}, #{entity.education},
+            #{entity.industry}, #{entity.remark}, #{entity.trusted}, #{entity.notTrusted}, #{entity.status},
+            #{entity.views}, #{entity.likes}, #{entity.favorites}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id) , company = values(company) , city = values(city) , salary = values(salary) ,
+        education = values(education) , industry = values(industry) , remark = values(remark) , trusted =
+        values(trusted) , not_trusted = values(not_trusted) , status = values(status) , views = values(views) , likes =
+        values(likes) , favorites = values(favorites) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update black_horse.salary_info
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="company != null and company != ''">
+                company = #{company},
+            </if>
+            <if test="city != null and city != ''">
+                city = #{city},
+            </if>
+            <if test="salary != null and salary != ''">
+                salary = #{salary},
+            </if>
+            <if test="education != null and education != ''">
+                education = #{education},
+            </if>
+            <if test="industry != null and industry != ''">
+                industry = #{industry},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="trusted != null">
+                trusted = #{trusted},
+            </if>
+            <if test="notTrusted != null">
+                not_trusted = #{notTrusted},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="views != null">
+                views = #{views},
+            </if>
+            <if test="likes != null">
+                likes = #{likes},
+            </if>
+            <if test="favorites != null">
+                favorites = #{favorites},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where salary_id = #{salaryId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from black_horse.salary_info where salary_id = #{salaryId}
+    </delete>
+
+</mapper>

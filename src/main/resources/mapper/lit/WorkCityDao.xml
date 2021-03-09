@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hmxz.modules.lit.dao.WorkCityDao">
+
+    <resultMap type="cn.hmxz.modules.lit.entity.WorkCity" id="WorkCityMap">
+        <result property="cityId" column="city_id" jdbcType="INTEGER"/>
+        <result property="cityName" column="city_name" jdbcType="VARCHAR"/>
+        <result property="infoId" column="info_id" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="WorkCityMap">
+        select
+          city_id, city_name, info_id, create_time
+        from black_horse.work_city
+        where city_id = #{cityId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="WorkCityMap">
+        select
+          city_id, city_name, info_id, create_time
+        from black_horse.work_city
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryInfoIdByCity" resultType="java.lang.Long">
+        select distinct info_id
+        from black_horse.work_city
+        <where>
+            <if test="cityName != null and cityName != ''">
+                and city_name = #{cityName}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryDistinctCity" resultType="java.lang.String">
+        select distinct city_name
+        from black_horse.work_city order by create_time desc
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="WorkCityMap">
+        select
+        city_id, city_name, info_id, create_time
+        from black_horse.work_city
+        <where>
+            <if test="cityId != null">
+                and city_id = #{cityId}
+            </if>
+            <if test="cityName != null and cityName != ''">
+                and city_name = #{cityName}
+            </if>
+            <if test="infoId != null">
+                and info_id = #{infoId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="cityId" useGeneratedKeys="true">
+        insert into black_horse.work_city(city_id, city_name, info_id, create_time)
+        values (#{cityId}, #{cityName}, #{infoId}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="cityId" useGeneratedKeys="true">
+        insert into black_horse.work_city(city_name, info_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.cityName}, #{entity.infoId}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="cityId" useGeneratedKeys="true">
+        insert into black_horse.work_city(city_name, info_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.cityName}, #{entity.infoId}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        city_name = values(city_name) , info_id = values(info_id) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update black_horse.work_city
+        <set>
+            <if test="cityName != null and cityName != ''">
+                city_name = #{cityName},
+            </if>
+            <if test="infoId != null">
+                info_id = #{infoId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where city_id = #{cityId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from black_horse.work_city where city_id = #{cityId}
+    </delete>
+
+</mapper>

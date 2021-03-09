@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hmxz.modules.lit.dao.UserInfoDao">
+
+    <resultMap type="cn.hmxz.modules.lit.entity.UserInfo" id="UserInfoMap">
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="blackHorseId" column="black_horse_id" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="school" column="school" jdbcType="VARCHAR"/>
+        <result property="grades" column="grades" jdbcType="VARCHAR"/>
+        <result property="company" column="company" jdbcType="VARCHAR"/>
+        <result property="position" column="position" jdbcType="VARCHAR"/>
+        <result property="incumbency" column="incumbency" jdbcType="VARCHAR"/>
+        <result property="faceImage" column="face_image" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserInfoMap">
+        select
+          user_id, user_name, password, nick_name, black_horse_id, sex, school, grades, company, position, incumbency, face_image, create_time
+        from black_horse.user_info
+        where user_id = #{userId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserInfoMap">
+        select
+          user_id, user_name, password, nick_name, black_horse_id, sex, school, grades, company, position, incumbency, face_image, create_time
+        from black_horse.user_info
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserInfoMap">
+        select
+        user_id, user_name, password, nick_name, black_horse_id, sex, school, grades, company, position, incumbency,
+        face_image, create_time
+        from black_horse.user_info
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="nickName != null and nickName != ''">
+                and nick_name = #{nickName}
+            </if>
+            <if test="blackHorseId != null and blackHorseId != ''">
+                and black_horse_id = #{blackHorseId}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="school != null and school != ''">
+                and school = #{school}
+            </if>
+            <if test="grades != null and grades != ''">
+                and grades = #{grades}
+            </if>
+            <if test="company != null and company != ''">
+                and company = #{company}
+            </if>
+            <if test="position != null and position != ''">
+                and position = #{position}
+            </if>
+            <if test="incumbency != null and incumbency != ''">
+                and incumbency = #{incumbency}
+            </if>
+            <if test="faceImage != null and faceImage != ''">
+                and face_image = #{faceImage}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="userId" useGeneratedKeys="true">
+        insert into black_horse.user_info(user_name, password, nick_name, black_horse_id, sex, school, grades, company, position, incumbency, face_image, create_time)
+        values (#{userName}, #{password}, #{nickName}, #{blackHorseId}, #{sex}, #{school}, #{grades}, #{company}, #{position}, #{incumbency}, #{faceImage}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="userId" useGeneratedKeys="true">
+        insert into black_horse.user_info(user_name, password, nick_name, black_horse_id, sex, school, grades, company,
+        position, incumbency, face_image, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userName}, #{entity.password}, #{entity.nickName}, #{entity.blackHorseId}, #{entity.sex},
+            #{entity.school}, #{entity.grades}, #{entity.company}, #{entity.position}, #{entity.incumbency},
+            #{entity.faceImage}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="userId" useGeneratedKeys="true">
+        insert into black_horse.user_info(user_name, password, nick_name, black_horse_id, sex, school, grades, company,
+        position, incumbency, face_image, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userName}, #{entity.password}, #{entity.nickName}, #{entity.blackHorseId}, #{entity.sex},
+            #{entity.school}, #{entity.grades}, #{entity.company}, #{entity.position}, #{entity.incumbency},
+            #{entity.faceImage}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        user_name = values(user_name) , password = values(password) , nick_name = values(nick_name) , black_horse_id =
+        values(black_horse_id) , sex = values(sex) , school = values(school) , grades = values(grades) , company =
+        values(company) , position = values(position) , incumbency = values(incumbency) , face_image =
+        values(face_image) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update black_horse.user_info
+        <set>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                nick_name = #{nickName},
+            </if>
+            <if test="blackHorseId != null and blackHorseId != ''">
+                black_horse_id = #{blackHorseId},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="school != null and school != ''">
+                school = #{school},
+            </if>
+            <if test="grades != null and grades != ''">
+                grades = #{grades},
+            </if>
+            <if test="company != null and company != ''">
+                company = #{company},
+            </if>
+            <if test="position != null and position != ''">
+                position = #{position},
+            </if>
+            <if test="incumbency != null and incumbency != ''">
+                incumbency = #{incumbency},
+            </if>
+            <if test="faceImage != null and faceImage != ''">
+                face_image = #{faceImage},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from black_horse.user_info where user_id = #{userId}
+    </delete>
+
+</mapper>

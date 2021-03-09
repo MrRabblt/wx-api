@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hmxz.modules.lit.dao.CampusRecruitmentInfoDao">
+
+    <resultMap type="cn.hmxz.modules.lit.entity.CampusRecruitmentInfo" id="CampusRecruitmentInfoMap">
+        <result property="infoId" column="info_id" jdbcType="INTEGER"/>
+        <result property="infoName" column="info_name" jdbcType="VARCHAR"/>
+        <result property="infoCompany" column="info_company" jdbcType="VARCHAR"/>
+        <result property="companyShortName" column="company_short_name" jdbcType="VARCHAR"/>
+        <result property="infoImage" column="info_image" jdbcType="VARCHAR"/>
+        <result property="infoUrl" column="info_url" jdbcType="VARCHAR"/>
+        <result property="infoPriority" column="info_priority" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CampusRecruitmentInfoMap">
+        select
+          info_id, info_name, info_company, company_short_name, info_image, info_url, info_priority, status, create_time
+        from black_horse.campus_recruitment_info
+        where info_id = #{infoId}
+    </select>
+
+    <!--查询多个-->
+    <select id="queryInfoByIds" resultMap="CampusRecruitmentInfoMap">
+        select
+          info_id, info_name, info_company, company_short_name, info_image, info_url, info_priority, status, create_time
+        from black_horse.campus_recruitment_info where
+        info_id in
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and status='Active'
+        order by info_priority desc
+    </select>
+
+    <!--查询多个-->
+    <select id="queryInfoByCompany" resultMap="CampusRecruitmentInfoMap">
+        select
+        info_id, info_name, info_company, company_short_name, info_image, info_url, info_priority, status, create_time
+        from black_horse.campus_recruitment_info
+        <where>
+            <if test="idList.size > 0">
+                and info_id in
+                <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="company != null and company != ''">
+                and (info_company like concat('%', #{company},'%') or company_short_name like concat('%', #{company},'%'))
+            </if>
+            and status='Active'
+        </where>
+        order by info_priority desc
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CampusRecruitmentInfoMap">
+        select
+          info_id, info_name, info_company, company_short_name, info_image, info_url, info_priority, status, create_time
+        from black_horse.campus_recruitment_info
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="CampusRecruitmentInfoMap">
+        select
+        info_id, info_name, info_company, company_short_name, info_image, info_url, info_priority, status, create_time
+        from black_horse.campus_recruitment_info
+        <where>
+            <if test="infoId != null">
+                and info_id = #{infoId}
+            </if>
+            <if test="infoName != null and infoName != ''">
+                and info_name = #{infoName}
+            </if>
+            <if test="infoCompany != null and infoCompany != ''">
+                and info_company = #{infoCompany}
+            </if>
+            <if test="companyShortName != null and companyShortName != ''">
+                and company_short_name = #{companyShortName}
+            </if>
+            <if test="infoImage != null and infoImage != ''">
+                and info_image = #{infoImage}
+            </if>
+            <if test="infoUrl != null and infoUrl != ''">
+                and info_url = #{infoUrl}
+            </if>
+            <if test="infoPriority != null">
+                and info_priority = #{infoPriority}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="infoId" useGeneratedKeys="true">
+        insert into black_horse.campus_recruitment_info(info_id, info_name, info_company, company_short_name, info_image, info_url, info_priority, status, create_time)
+        values (#{infoId}, #{infoName}, #{infoCompany}, #{companyShortName}, #{infoImage}, #{infoUrl}, #{infoPriority}, #{status}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="infoId" useGeneratedKeys="true">
+        insert into black_horse.campus_recruitment_info(info_name, info_company, company_short_name, info_image,
+        info_url, info_priority, status, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.infoName}, #{entity.infoCompany}, #{entity.companyShortName}, #{entity.infoImage},
+            #{entity.infoUrl}, #{entity.infoPriority}, #{entity.status}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="infoId" useGeneratedKeys="true">
+        insert into black_horse.campus_recruitment_info(info_name, info_company, company_short_name, info_image,
+        info_url, info_priority, status, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.infoName}, #{entity.infoCompany}, #{entity.companyShortName}, #{entity.infoImage},
+            #{entity.infoUrl}, #{entity.infoPriority}, #{entity.status}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        info_name = values(info_name) , info_company = values(info_company) , company_short_name =
+        values(company_short_name) , info_image = values(info_image) , info_url = values(info_url) , info_priority =
+        values(info_priority) , status = values(status) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update black_horse.campus_recruitment_info
+        <set>
+            <if test="infoName != null and infoName != ''">
+                info_name = #{infoName},
+            </if>
+            <if test="infoCompany != null and infoCompany != ''">
+                info_company = #{infoCompany},
+            </if>
+            <if test="companyShortName != null and companyShortName != ''">
+                company_short_name = #{companyShortName},
+            </if>
+            <if test="infoImage != null and infoImage != ''">
+                info_image = #{infoImage},
+            </if>
+            <if test="infoUrl != null and infoUrl != ''">
+                info_url = #{infoUrl},
+            </if>
+            <if test="infoPriority != null">
+                info_priority = #{infoPriority},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where info_id = #{infoId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from black_horse.campus_recruitment_info where info_id = #{infoId}
+    </delete>
+
+</mapper>

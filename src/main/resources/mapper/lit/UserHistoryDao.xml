@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hmxz.modules.lit.dao.UserHistoryDao">
+    <resultMap type="cn.hmxz.modules.lit.entity.UserHistory" id="UserHistoryMap">
+        <result property="hisId" column="his_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="relatedId" column="related_id" jdbcType="INTEGER"/>
+        <result property="relatedType" column="related_type" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserHistoryMap">
+        select his_id,
+               user_id,
+               related_id,
+               related_type,
+               create_time
+        from black_horse.user_history
+        where his_id = #{hisId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserHistoryMap">
+        select his_id,
+               user_id,
+               related_id,
+               related_type,
+               create_time
+        from black_horse.user_history
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserHistoryMap">
+        select his_id,
+               user_id,
+               related_id,
+               related_type,
+               create_time
+        from black_horse.user_history
+        <where>
+            <if test="hisId != null">
+                and his_id = #{hisId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="relatedId != null">
+                and related_id = #{relatedId}
+            </if>
+            <if test="relatedType != null and relatedType != ''">
+                and related_type = #{relatedType}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="hisId" useGeneratedKeys="true">
+        insert into black_horse.user_history(his_id, user_id, related_id, related_type, create_time)
+        values (#{hisId}, #{userId}, #{relatedId}, #{relatedType}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="hisId" useGeneratedKeys="true">
+        insert into black_horse.user_history(user_id, related_id, related_type, create_time)
+                values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.relatedId}, #{entity.relatedType}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="hisId" useGeneratedKeys="true">
+        insert into black_horse.user_history(user_id, related_id, related_type, create_time)
+                values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.relatedId}, #{entity.relatedType}, #{entity.createTime})
+        </foreach>
+        on duplicate key update user_id      = values(user_id),
+                                related_id   = values(related_id),
+                                related_type = values(related_type),
+                                create_time
+                                             = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update black_horse.user_history
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="relatedId != null">
+                related_id = #{relatedId},
+            </if>
+            <if test="relatedType != null and relatedType != ''">
+                related_type = #{relatedType},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where his_id = #{hisId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from black_horse.user_history
+        where his_id = #{hisId}
+    </delete>
+</mapper>

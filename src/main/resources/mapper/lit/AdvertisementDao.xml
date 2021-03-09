@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hmxz.modules.lit.dao.AdvertisementDao">
+
+    <resultMap type="cn.hmxz.modules.lit.entity.Advertisement" id="AdvertisementMap">
+        <result property="adId" column="ad_id" jdbcType="INTEGER"/>
+        <result property="adName" column="ad_name" jdbcType="VARCHAR"/>
+        <result property="adDesc" column="ad_desc" jdbcType="VARCHAR"/>
+        <result property="adUrl" column="ad_url" jdbcType="VARCHAR"/>
+        <result property="adImage" column="ad_image" jdbcType="VARCHAR"/>
+        <result property="directType" column="direct_type" jdbcType="VARCHAR"/>
+        <result property="adType" column="ad_type" jdbcType="VARCHAR"/>
+        <result property="adPriority" column="ad_priority" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AdvertisementMap">
+        select
+          ad_id, ad_name, ad_desc, ad_url, ad_image, direct_type, ad_type, ad_priority, create_time
+        from black_horse.advertisement
+        where ad_id = #{adId}
+    </select>
+
+    <!--查询列表-->
+    <select id="queryByAdType" resultMap="AdvertisementMap">
+        select
+          ad_id, ad_name, ad_desc, ad_url, ad_image, direct_type, ad_type, ad_priority, create_time
+        from black_horse.advertisement
+        where ad_type = #{adType} order by ad_priority desc limit 5;
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AdvertisementMap">
+        select
+          ad_id, ad_name, ad_desc, ad_url, ad_image, direct_type, ad_type, ad_priority, create_time
+        from black_horse.advertisement
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AdvertisementMap">
+        select
+        ad_id, ad_name, ad_desc, ad_url, ad_image, direct_type, ad_type, ad_priority, create_time
+        from black_horse.advertisement
+        <where>
+            <if test="adId != null">
+                and ad_id = #{adId}
+            </if>
+            <if test="adName != null and adName != ''">
+                and ad_name = #{adName}
+            </if>
+            <if test="adDesc != null and adDesc != ''">
+                and ad_desc = #{adDesc}
+            </if>
+            <if test="adUrl != null and adUrl != ''">
+                and ad_url = #{adUrl}
+            </if>
+            <if test="adImage != null and adImage != ''">
+                and ad_image = #{adImage}
+            </if>
+            <if test="directType != null and directType != ''">
+                and direct_type = #{directType}
+            </if>
+            <if test="adType != null and adType != ''">
+                and ad_type = #{adType}
+            </if>
+            <if test="adPriority != null">
+                and ad_priority = #{adPriority}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="adId" useGeneratedKeys="true">
+        insert into black_horse.advertisement(ad_id, ad_name, ad_desc, ad_url, ad_image, direct_type, ad_type, ad_priority, create_time)
+        values (#{adId}, #{adName}, #{adDesc}, #{adUrl}, #{adImage}, #{directType}, #{adType}, #{adPriority}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="adId" useGeneratedKeys="true">
+        insert into black_horse.advertisement(ad_name, ad_desc, ad_url, ad_image, direct_type, ad_type, ad_priority, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.adName}, #{entity.adDesc}, #{entity.adUrl}, #{entity.adImage}, #{entity.directType}, #{entity.adType},
+            #{entity.adPriority}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="adId" useGeneratedKeys="true">
+        insert into black_horse.advertisement(ad_name, ad_desc, ad_url, ad_image, direct_type, ad_type, ad_priority, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.adName}, #{entity.adDesc}, #{entity.adUrl}, #{entity.adImage}, #{entity.directType}, #{entity.adType},
+            #{entity.adPriority}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        ad_name = values(ad_name) , ad_desc = values(ad_desc) , ad_url = values(ad_url) , ad_image = values(ad_image) , direct_type =
+        values(direct_type) , ad_type = values(ad_type) , ad_priority = values(ad_priority) , create_time =
+        values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update black_horse.advertisement
+        <set>
+            <if test="adName != null and adName != ''">
+                ad_name = #{adName},
+            </if>
+            <if test="adDesc != null and adDesc != ''">
+                ad_desc = #{adDesc},
+            </if>
+            <if test="adUrl != null and adUrl != ''">
+                ad_url = #{adUrl},
+            </if>
+            <if test="adImage != null and adImage != ''">
+                ad_image = #{adImage},
+            </if>
+            <if test="directType != null and directType != ''">
+                direct_type = #{directType},
+            </if>
+            <if test="adType != null and adType != ''">
+                ad_type = #{adType},
+            </if>
+            <if test="adPriority != null">
+                ad_priority = #{adPriority},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where ad_id = #{adId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from black_horse.advertisement where ad_id = #{adId}
+    </delete>
+
+</mapper>
