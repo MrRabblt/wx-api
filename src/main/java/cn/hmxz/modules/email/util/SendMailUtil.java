@@ -68,7 +68,7 @@ public class SendMailUtil {
         HtmlEmail email = new HtmlEmail();
         //设置主机名
         email.setHostName(mailSenderInfo.getHost());
-        email.setSmtpPort(456);
+        email.setSmtpPort(465);
         //设置收件人
         email.addTo(mailSenderInfo.getTos());
         //设置发送用户邮箱和邮件名称
