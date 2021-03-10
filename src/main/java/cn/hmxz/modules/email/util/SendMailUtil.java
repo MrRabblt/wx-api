@@ -68,7 +68,6 @@ public class SendMailUtil {
         HtmlEmail email = new HtmlEmail();
         //设置主机名
         email.setHostName(mailSenderInfo.getHost());
-        email.setSmtpPort(465);
         //设置收件人
         email.addTo(mailSenderInfo.getTos());
         //设置发送用户邮箱和邮件名称
@@ -77,6 +76,10 @@ public class SendMailUtil {
         email.setAuthentication(mailSenderInfo.getUserName(), mailSenderInfo.getPassword());
         //邮件编码格式
         email.setCharset("UTF-8");
+
+        // ssl 加密
+        email.setSSLOnConnect(true);
+        email.setSslSmtpPort("465");
         //设置邮件头部
         email.setSubject(mailSenderInfo.getSubject());
         //设置邮件内容，识别HTML标签
